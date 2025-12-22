@@ -1,0 +1,5 @@
+{
+  "name": "OdontoFlow Dashboard",
+  "description": "A comprehensive dental clinic management dashboard featuring patient queues, financial tracking, and interactive patient profiles with odontograms.",
+  "requestFramePermissions": []
+}
