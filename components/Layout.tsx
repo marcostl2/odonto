@@ -1,20 +1,26 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { NavLink, Outlet, useNavigate } from 'react-router-dom';
-import { 
-  LayoutDashboard, 
-  Users, 
-  DollarSign, 
-  LogOut, 
+import {
+  LayoutDashboard,
+  Users,
+  DollarSign,
+  LogOut,
   Activity,
-  Menu
+  Menu,
+  X
 } from 'lucide-react';
 
 export const Layout: React.FC = () => {
   const navigate = useNavigate();
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
   const handleLogout = () => {
     localStorage.removeItem('auth');
     navigate('/login');
+  };
+
+  const closeMobileMenu = () => {
+    setIsMobileMenuOpen(false);
   };
 
   return (
@@ -27,12 +33,12 @@ export const Layout: React.FC = () => {
         </div>
 
         <nav className="flex-1 py-6 px-3 space-y-1">
-          <NavLink 
-            to="/" 
-            className={({ isActive }) => 
+          <NavLink
+            to="/"
+            className={({ isActive }) =>
               `flex items-center px-4 py-3 rounded-lg transition-colors group ${
-                isActive 
-                  ? 'bg-blue-600 text-white shadow-md shadow-blue-900/20' 
+                isActive
+                  ? 'bg-blue-600 text-white shadow-md shadow-blue-900/20'
                   : 'text-slate-400 hover:bg-slate-800 hover:text-white'
               }`
             }
@@ -41,12 +47,12 @@ export const Layout: React.FC = () => {
             <span className="font-medium">Painel Principal</span>
           </NavLink>
 
-          <NavLink 
-            to="/financial" 
-            className={({ isActive }) => 
+          <NavLink
+            to="/financial"
+            className={({ isActive }) =>
               `flex items-center px-4 py-3 rounded-lg transition-colors group ${
-                isActive 
-                  ? 'bg-blue-600 text-white shadow-md shadow-blue-900/20' 
+                isActive
+                  ? 'bg-blue-600 text-white shadow-md shadow-blue-900/20'
                   : 'text-slate-400 hover:bg-slate-800 hover:text-white'
               }`
             }
@@ -62,7 +68,7 @@ export const Layout: React.FC = () => {
         </nav>
 
         <div className="p-4 border-t border-slate-800 bg-slate-950">
-          <button 
+          <button
             onClick={handleLogout}
             className="flex items-center w-full px-4 py-2 text-sm text-slate-400 hover:text-red-400 hover:bg-slate-900 rounded-md transition-colors"
           >
@@ -73,15 +79,78 @@ export const Layout: React.FC = () => {
       </aside>
 
       {/* Mobile Header */}
-      <div className="md:hidden fixed top-0 left-0 w-full h-16 bg-slate-900 z-10 flex items-center justify-between px-4">
-          <div className="flex items-center text-white">
-            <Activity className="w-6 h-6 text-blue-500 mr-2" />
-            <span className="font-bold text-lg">OdontoFlow</span>
-          </div>
-          <button className="text-white">
+      <div className="md:hidden fixed top-0 left-0 w-full h-16 bg-slate-900 z-30 flex items-center justify-between px-4">
+        <div className="flex items-center text-white">
+          <Activity className="w-6 h-6 text-blue-500 mr-2" />
+          <span className="font-bold text-lg">OdontoFlow</span>
+        </div>
+        <button
+          onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+          className="text-white"
+        >
+          {isMobileMenuOpen ? (
+            <X className="w-6 h-6" />
+          ) : (
             <Menu className="w-6 h-6" />
-          </button>
+          )}
+        </button>
       </div>
+
+      {/* Mobile Menu Dropdown */}
+      {isMobileMenuOpen && (
+        <>
+          <div
+            className="md:hidden fixed inset-0 bg-black bg-opacity-50 z-20"
+            onClick={closeMobileMenu}
+          />
+          <div className="md:hidden fixed top-16 left-0 right-0 bg-slate-900 z-20 shadow-xl">
+            <nav className="py-4 px-3 space-y-1">
+              <NavLink
+                to="/"
+                onClick={closeMobileMenu}
+                className={({ isActive }) =>
+                  `flex items-center px-4 py-3 rounded-lg transition-colors ${
+                    isActive
+                      ? 'bg-blue-600 text-white shadow-md'
+                      : 'text-slate-400 hover:bg-slate-800 hover:text-white'
+                  }`
+                }
+              >
+                <LayoutDashboard className="w-5 h-5 mr-3" />
+                <span className="font-medium">Painel Principal</span>
+              </NavLink>
+
+              <NavLink
+                to="/financial"
+                onClick={closeMobileMenu}
+                className={({ isActive }) =>
+                  `flex items-center px-4 py-3 rounded-lg transition-colors ${
+                    isActive
+                      ? 'bg-blue-600 text-white shadow-md'
+                      : 'text-slate-400 hover:bg-slate-800 hover:text-white'
+                  }`
+                }
+              >
+                <DollarSign className="w-5 h-5 mr-3" />
+                <span className="font-medium">Financeiro</span>
+              </NavLink>
+
+              <div className="pt-4 mt-4 border-t border-slate-800">
+                <button
+                  onClick={() => {
+                    closeMobileMenu();
+                    handleLogout();
+                  }}
+                  className="flex items-center w-full px-4 py-2 text-sm text-slate-400 hover:text-red-400 hover:bg-slate-900 rounded-md transition-colors"
+                >
+                  <LogOut className="w-4 h-4 mr-3" />
+                  Sair do Sistema
+                </button>
+              </div>
+            </nav>
+          </div>
+        </>
+      )}
 
       {/* Main Content */}
       <main className="flex-1 overflow-auto md:p-8 p-4 pt-20 md:pt-8 scroll-smooth">
